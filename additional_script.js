@@ -9,24 +9,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Получаем значение из поля с расходом топлива
         var consumption = parseInt(document.getElementById('consumption').value);
-        console.log('Расход топлива:', consumption);
 
         // Получаем значение из 4-го столбца первой строки таблицы
         var fuelLeftCell = dataTable.querySelector('tbody tr:first-child td:nth-child(4)');
-        console.log('Значение из 4-го столбца первой строки таблицы:', fuelLeftCell.textContent);
 
         // Записываем общий расход топлива в первую строку таблицы, в столбец "Залишок в баку"
         var firstRowFuelLeftCell = dataTable.querySelector('tbody tr:first-child td:nth-child(2)');
-        //firstRowFuelLeftCell.textContent = fuelLeftCell.textContent;
-
-        // Выводим общий расход топлива в консоль
-        console.log('Общий расход топлива:', fuelLeftCell.textContent);
 
         const rows = dataTable.querySelectorAll('tbody tr');
         const rowIndices = Array.from(rows).map((row, index) => index);
-
-        console.log('Индексы строк в таблице:');
-        console.log(rowIndices);
         
         const fuelIndices = [];
 
@@ -39,9 +30,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        console.log('Индексы строк с дозаправкой:');
-        console.log(fuelIndices);
-
         //переберем массив
         const arrayOfArrays = fuelIndices.map((index, i, arr) => {
             if (i === arr.length - 1) {
@@ -50,33 +38,40 @@ document.addEventListener('DOMContentLoaded', function() {
                 return rowIndices.slice(index, arr[i + 1]);
             }
         });
-        
-        console.log(arrayOfArrays);
 
         for (let i = 0; i < arrayOfArrays.length; i++) {
             const temp = arrayOfArrays[i]; // Массив индексов строк для текущей группы
-            let safeTank = parseInt(dataTable.querySelector(`tbody tr:nth-child(${temp[0] + 1 }) td:nth-child(2)`).textContent) - 6;
-            console.log(safeTank);
+            let safeTank = 0;
+
             for (let j = 0; j < temp.length; j++) { // Итерация по индексам строк внутри текущей группы
                 const arr = temp[j] + 1; // Индекс строки в таблице (начиная с 1)
                 const tank = dataTable.querySelector(`tbody tr:nth-child(${arr}) td:nth-child(2)`);
                 const distance = dataTable.querySelector(`tbody tr:nth-child(${arr}) td:nth-child(3)`);
-        
-                let safeDay = Math.floor(safeTank / temp.length * 100 / consumption) + Math.floor(Math.random() * 21) - 10;
-                console.log(safeDay);
-                if (j === 0) { // Если это первая строка в группе
+                const safeDay = Math.floor(safeTank / temp.length * 100 / consumption) + Math.floor(Math.random() * 21) - 10;
+                
+                if (j === 0 && i === 0) { 
                     tank.textContent = dataTable.querySelector(`tbody tr:nth-child(${arr}) td:nth-child(4)`).textContent;
                     distance.textContent = Math.floor(Math.random() * 16) + 10;
-                } else {
+                    safeTank = parseInt(tank.textContent) - 6;
+                } 
+                
+                else if (j === 0 && i > 0) { 
+                    tank.textContent =
+                        parseInt(dataTable.querySelector(`tbody tr:nth-child(${arr - 1}) td:nth-child(2)`).textContent)
+                        - (parseInt(dataTable.querySelector(`tbody tr:nth-child(${arr - 1}) td:nth-child(3)`).textContent) * consumption / 100)
+                        + parseInt(dataTable.querySelector(`tbody tr:nth-child(${arr}) td:nth-child(4)`).textContent);
+                    safeTank = parseInt(tank.textContent) - 6;
+                    distance.textContent = Math.floor(Math.random() * 16) + 10;
+                } 
+                
+                else {
                     tank.textContent =
                         parseInt(dataTable.querySelector(`tbody tr:nth-child(${arr - 1}) td:nth-child(2)`).textContent)
                         - (parseInt(dataTable.querySelector(`tbody tr:nth-child(${arr - 1}) td:nth-child(3)`).textContent) * consumption / 100);
                     distance.textContent = safeDay;
                 }
+                
             }
-            console.log(temp);
         }
-        
-
     });
 });
