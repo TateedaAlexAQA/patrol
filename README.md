@@ -20,6 +20,9 @@ This is a simple fuel consumption calculator application built with JavaScript. 
 6. Введіть витрату пального на кілометр.
 7. Натисніть кнопку "Розрахувати", щоб отримати результати.
 
-- **Font Size**:
-  ```html
-  <span style="font-size: 18px;">Text with font size 18px</span>
+## Technologies Used
+HTML
+CSS
+JavaScript
+## Contributors
+Alex
