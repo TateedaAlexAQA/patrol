@@ -13,7 +13,7 @@ This is a simple fuel consumption calculator application built with JavaScript. 
 5. Click the "Add to Table" button to add refueling data to the table.
 6. Enter the fuel consumption per kilometer.
 7. Click the "Calculate" button to generate results.
-   
+
 1. Введіть рік та місяць, за які ви хочете розрахувати витрату пального.
 2. Опціонально вкажіть початкову та кінцеву дати вашої відпустки.
 3. Натисніть кнопку "Створити таблицю", щоб згенерувати таблицю.
