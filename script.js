@@ -1,39 +1,35 @@
 document.addEventListener('DOMContentLoaded', function() {
     const dataTable = document.getElementById('data-table');
+    const calculatorForm = document.getElementById('calculator-form');
 
-    // Добавляем обработчик события submit для формы калькулятора
-    document.getElementById('calculator-form').addEventListener('submit', function(event) {
+    calculatorForm.addEventListener('submit', function(event) {
         event.preventDefault();
 
-        var year = parseInt(document.getElementById('year').value);
-        var month = parseInt(document.getElementById('month').value);
-
-        var vacationStart = new Date(document.getElementById('vacation-start').value);
-        vacationStart.setHours(0, 0, 0, 0);
-
-        var vacationEnd = new Date(document.getElementById('vacation-end').value);
-        vacationEnd.setHours(0, 0, 0, 0);
+        const year = parseInt(document.getElementById('year').value);
+        const month = parseInt(document.getElementById('month').value);
+        const vacationStart = new Date(document.getElementById('vacation-start').value);
+        const vacationEnd = new Date(document.getElementById('vacation-end').value);
 
         if (isNaN(year) || isNaN(month) || month < 1 || month > 12) {
             alert('Будь ласка, введіть коректні дані.');
             return;
         }
 
-        var tableBody = document.querySelector('#data-table tbody');
+        const tableBody = document.querySelector('#data-table tbody');
         tableBody.innerHTML = '';
 
-        var startDate = new Date(year, month - 1, 1);
-        var endDate = new Date(year, month, 0);
+        const startDate = new Date(year, month - 1, 1);
+        const endDate = new Date(year, month, 0);
 
-        for (var date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
-            if (date.getDay() !== 0 && date.getDay() !== 6 && !(date.getTime() >= vacationStart.getTime() && date.getTime() <= vacationEnd.getTime())) {
-                var newRow = document.createElement('tr');
-                var newDateCell = document.createElement('td');
+        for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+            if (date.getDay() !== 0 && date.getDay() !== 6 && !(date >= vacationStart && date <= vacationEnd)) {
+                const newRow = document.createElement('tr');
+                const newDateCell = document.createElement('td');
                 newDateCell.textContent = formatDate(date);
                 newRow.appendChild(newDateCell);
 
-                for (var j = 0; j < 3; j++) {
-                    var emptyNewCell = document.createElement('td');
+                for (let j = 0; j < 3; j++) {
+                    const emptyNewCell = document.createElement('td');
                     newRow.appendChild(emptyNewCell);
                 }
 
@@ -42,7 +38,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Добавляем обработчик события клика по кнопке "Додати до таблиці" для дозаправок
     document.querySelector('button[type="addReFlueing"]').addEventListener('click', function() {
         const refuelingsData = {};
 
@@ -65,9 +60,11 @@ document.addEventListener('DOMContentLoaded', function() {
         for (const date in refuelingsData) {
             const formattedDate = date.split('.').reverse().join('-');
             let dateFound = false;
+
             for (let i = 0; i < tableRows.length; i++) {
                 const rowDate = tableRows[i].querySelector('td:first-child').textContent;
                 const formattedRowDate = rowDate.split('.').reverse().join('-');
+
                 if (formattedRowDate === formattedDate) {
                     const fuelAmountCell = tableRows[i].querySelector('td:nth-child(4)');
                     fuelAmountCell.textContent = refuelingsData[date];
@@ -75,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
                 }
             }
+
             if (!dateFound) {
                 const errorMessage = `Дозаправка для дати ${date} не може бути додано. дата відсутня у таблиці`;
                 console.error(errorMessage);
@@ -83,11 +81,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Функція для форматування дати в формат "ДД.ММ.РРРР"
     function formatDate(date) {
-        var day = date.getDate();
-        var month = date.getMonth() + 1;
-        var year = date.getFullYear();
-        return (day < 10 ? '0' : '') + day + '.' + (month < 10 ? '0' : '') + month + '.' + year;
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        return `${day < 10 ? '0' : ''}${day}.${month < 10 ? '0' : ''}${month}.${year}`;
     }
 });

@@ -1,74 +1,53 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Находим кнопку "Розрахувати"
     const calculateButton = document.querySelector('button[type="button"]');
     const dataTable = document.getElementById('data-table');
 
-    // Добавляем обработчик события клика по кнопке "Розрахувати"
     calculateButton.addEventListener('click', function(event) {
         event.preventDefault();
 
-        // Получаем значение из поля с расходом топлива
-        var consumption = parseInt(document.getElementById('consumption').value);
-
-        // Получаем значение из 4-го столбца первой строки таблицы
-        var fuelLeftCell = dataTable.querySelector('tbody tr:first-child td:nth-child(4)');
-
-        // Записываем общий расход топлива в первую строку таблицы, в столбец "Залишок в баку"
-        var firstRowFuelLeftCell = dataTable.querySelector('tbody tr:first-child td:nth-child(2)');
-
+        const fuelConsumption = parseInt(document.getElementById('consumption').value);
         const rows = dataTable.querySelectorAll('tbody tr');
-        const rowIndices = Array.from(rows).map((row, index) => index);
-        
         const fuelIndices = [];
 
         rows.forEach((row, index) => {
-            // Получаем значение из ячейки в колонке "Дозаправка"
             const refuelingCell = row.querySelector('td:nth-child(4)');
-            // Если значение в ячейке не пустое, добавляем индекс строки в массив fuelIndices
             if (refuelingCell.textContent.trim() !== '') {
                 fuelIndices.push(index);
             }
         });
-
-        //переберем массив
+        // Create an array of row indices
+        const rowIndices = Array.from(rows).map((row, index) => index);
+        // Create an array of arrays, each containing indices of rows with consecutive refueling data
         const arrayOfArrays = fuelIndices.map((index, i, arr) => {
-            if (i === arr.length - 1) {
-                return rowIndices.slice(index);
-            } else {
-                return rowIndices.slice(index, arr[i + 1]);
-            }
+            return (i === arr.length - 1) ? rowIndices.slice(index) : rowIndices.slice(index, arr[i + 1]);
         });
-
+        // Loop through each array of row indices
         for (let i = 0; i < arrayOfArrays.length; i++) {
-            const temp = arrayOfArrays[i]; // Массив индексов строк для текущей группы
-            let safeTank = 0;
-
-            for (let j = 0; j < temp.length; j++) { // Итерация по индексам строк внутри текущей группы
-                const arr = temp[j] + 1; // Индекс строки в таблице (начиная с 1)
-                const tank = dataTable.querySelector(`tbody tr:nth-child(${arr}) td:nth-child(2)`);
-                const distance = dataTable.querySelector(`tbody tr:nth-child(${arr}) td:nth-child(3)`);
-                const safeDay = Math.floor(safeTank / temp.length * 100 / consumption) + Math.floor(Math.random() * 21) - 10;
+            const refuelingPeriod = arrayOfArrays[i];
+            let fuelInTank = 0;
+            // Loop through each index in the current array
+            for (let j = 0; j < refuelingPeriod.length; j++) {
+                const rowNumber = refuelingPeriod[j] + 1;
+                const fuelTank = dataTable.querySelector(`tbody tr:nth-child(${rowNumber}) td:nth-child(2)`);
+                const distance = dataTable.querySelector(`tbody tr:nth-child(${rowNumber}) td:nth-child(3)`);
+                const safeDistance = Math.floor(fuelInTank / refuelingPeriod.length * 100 / fuelConsumption) + Math.floor(Math.random() * 21) - 10;
                 
                 if (j === 0 && i === 0) { 
-                    tank.textContent = dataTable.querySelector(`tbody tr:nth-child(${arr}) td:nth-child(4)`).textContent;
+                    fuelTank.textContent = dataTable.querySelector(`tbody tr:nth-child(${rowNumber}) td:nth-child(4)`).textContent;
                     distance.textContent = Math.floor(Math.random() * 16) + 10;
-                    safeTank = parseInt(tank.textContent) - 6;
-                } 
-                
-                else if (j === 0 && i > 0) { 
-                    tank.textContent =
-                        parseInt(dataTable.querySelector(`tbody tr:nth-child(${arr - 1}) td:nth-child(2)`).textContent)
-                        - (parseInt(dataTable.querySelector(`tbody tr:nth-child(${arr - 1}) td:nth-child(3)`).textContent) * consumption / 100)
-                        + parseInt(dataTable.querySelector(`tbody tr:nth-child(${arr}) td:nth-child(4)`).textContent);
-                    safeTank = parseInt(tank.textContent) - 6;
+                    fuelInTank = parseInt(fuelTank.textContent) - 6;
+                } else if (j === 0 && i > 0) { 
+                    fuelTank.textContent =
+                        parseInt(dataTable.querySelector(`tbody tr:nth-child(${rowNumber - 1}) td:nth-child(2)`).textContent)
+                        - (parseInt(dataTable.querySelector(`tbody tr:nth-child(${rowNumber - 1}) td:nth-child(3)`).textContent) * fuelConsumption / 100)
+                        + parseInt(dataTable.querySelector(`tbody tr:nth-child(${rowNumber}) td:nth-child(4)`).textContent);
+                    fuelInTank = parseInt(fuelTank.textContent) - 6;
                     distance.textContent = Math.floor(Math.random() * 16) + 10;
-                } 
-                
-                else {
-                    tank.textContent =
-                        parseInt(dataTable.querySelector(`tbody tr:nth-child(${arr - 1}) td:nth-child(2)`).textContent)
-                        - (parseInt(dataTable.querySelector(`tbody tr:nth-child(${arr - 1}) td:nth-child(3)`).textContent) * consumption / 100);
-                    distance.textContent = safeDay;
+                } else {
+                    fuelTank.textContent =
+                        parseInt(dataTable.querySelector(`tbody tr:nth-child(${rowNumber - 1}) td:nth-child(2)`).textContent)
+                        - (parseInt(dataTable.querySelector(`tbody tr:nth-child(${rowNumber - 1}) td:nth-child(3)`).textContent) * fuelConsumption / 100);
+                    distance.textContent = safeDistance;
                 }
                 
             }

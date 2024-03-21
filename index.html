@@ -9,13 +9,11 @@
 <body>
     <div class="container">
         <h1>Калькулятор витрати пального</h1>
-        <!-- Форма для вводу даних -->
+        <!-- Form for table generating -->
         <form id="calculator-form">
             <label for="year">Рік:</label>
             <select id="year" required>
                 <option value="">Оберіть рік</option>
-                <!-- Додаємо варіанти від 2020 до 2030 -->
-                <!-- Можна також додати ці елементи динамічно при завантаженні сторінки -->
                 <option value="2020">2020</option>
                 <option value="2021">2021</option>
                 <option value="2022">2022</option>
@@ -31,7 +29,6 @@
             <label for="month">Місяць:</label>
             <select id="month" required>
                 <option value="">Оберіть місяць</option>
-                <!-- Додаємо варіанти для всіх місяців -->
                 <option value="1">Січень</option>
                 <option value="2">Лютий</option>
                 <option value="3">Березень</option>
@@ -45,6 +42,7 @@
                 <option value="11">Листопад</option>
                 <option value="12">Грудень</option>
             </select>
+            <!-- Set days off range -->
             <div class="vacation-dates">
                 <label for="vacation-start">Початок відпустки:</label>
                 <input type="date" id="vacation-start">
@@ -56,8 +54,8 @@
             <button type="submit">Створити таблицю</button>
 
         </form>
+        <!-- Set refluing dates -->
         <form>
-
         <table class="labels">
             <tr class="labels">
                 <th class="labels">Дата дозаправки:</th>
@@ -99,7 +97,7 @@
         <button type="addReFlueing">Додати до таблиці</button>
 
     </form>
-
+    <!-- Set consumption, generate results -->
     <form>
         <table class="labels">
             <tr class="labels">
@@ -109,7 +107,7 @@
         <input class="center" type="number" id="consumption" step="0.1" min="0" required>
         <button type="button">Розрахувати</button>
     </form>
-        <!-- Таблиця для відображення даних -->
+        <!-- Report  -->
         <table id="data-table">
             <thead>
                 <tr>
@@ -120,7 +118,7 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Сюди будуть додані рядки з даними -->
+
             </tbody>
         </table>
     </div>
